@@ -4,7 +4,7 @@
               "You should also make sure you are obeying our API design guidelines:",
               "https://pebbletechnology.atlassian.net/wiki/display/DEV/SDK+API+Design+Guidelines"
             ],
-  "revision" : "107",
+  "revision" : "109",
   "version" : "2.0",
   "files": [
     "fw/drivers/ambient_light.h",
@@ -4959,6 +4959,14 @@
       "type": "function",
       "name": "health_service_set_hrv_sample_period",
       "addedRevision": "107"
+    }, {
+      "type": "function",
+      "name": "health_service_peek_spo2_percent",
+      "addedRevision": "108"
+    }, {
+      "type": "function",
+      "name": "health_service_peek_spo2_quality",
+      "addedRevision": "109"
     }
   ],
   "fonts": [

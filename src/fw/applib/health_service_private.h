@@ -72,6 +72,8 @@ typedef struct HealthServiceState {
   HealthServiceCache *cache;
   EventServiceInfo health_event_service_info;
   uint16_t last_hrv_ppi_ms;
+  uint8_t last_spo2_percent;
+  uint8_t last_spo2_quality;
 } HealthServiceState;
 
 // initializes all static data, does not allocate a cache

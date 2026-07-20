@@ -652,6 +652,22 @@ void hrm_manager_new_data_cb(const HRMData *data) {
   }
 #endif
 
+  if (data->features & HRMFeature_SpO2) {
+    // Broadcast SpO2 readings as a health service event so apps can log them without consuming
+    // raw HRM events. Readings arrive on the system's SpO2 monitoring schedule.
+    PebbleEvent spo2_event = {
+      .type = PEBBLE_HEALTH_SERVICE_EVENT,
+      .health_event = {
+        .type = HealthEventSpO2Update,
+        .data.spo2_update = {
+          .percent = data->spo2_percent,
+          .quality = data->spo2_quality,
+        },
+      },
+    };
+    event_put(&spo2_event);
+  }
+
   time_t utc_now = rtc_get_time();
   RtcTicks cur_ticks = rtc_get_ticks();
   HRMFeature kernel_bg_features_sent = 0;

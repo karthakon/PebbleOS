@@ -766,6 +766,24 @@ uint16_t health_service_peek_hrv_ppi_ms(void) {
 }
 
 // ----------------------------------------------------------------------------------------------
+uint8_t health_service_peek_spo2_percent(void) {
+  HealthServiceState *state = prv_get_state(false);
+  if (!state) {
+    return 0;
+  }
+  return state->last_spo2_percent;
+}
+
+// ----------------------------------------------------------------------------------------------
+uint8_t health_service_peek_spo2_quality(void) {
+  HealthServiceState *state = prv_get_state(false);
+  if (!state) {
+    return 0;
+  }
+  return state->last_spo2_quality;
+}
+
+// ----------------------------------------------------------------------------------------------
 T_STATIC void prv_health_event_handler(PebbleEvent *e, void *context) {
 #if !defined(CONFIG_RECOVERY_FW)
   HealthServiceState *state = prv_get_state(true);
@@ -774,6 +792,10 @@ T_STATIC void prv_health_event_handler(PebbleEvent *e, void *context) {
   // If this is a significant update event, invalidate our cache
   if (e->health_event.type == HealthEventHRVUpdate) {
     state->last_hrv_ppi_ms = e->health_event.data.hrv_update.ppi_ms;
+  }
+  else if (e->health_event.type == HealthEventSpO2Update) {
+    state->last_spo2_percent = e->health_event.data.spo2_update.percent;
+    state->last_spo2_quality = (uint8_t)e->health_event.data.spo2_update.quality;
   }
   else if (e->health_event.type == HealthEventSignificantUpdate) {
     if (state->cache) {
