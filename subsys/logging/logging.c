@@ -3,16 +3,16 @@
 
 #include "pulse_logging.h"
 
-#include "pebble_tasks.h"
+#include "kernel/pebble_tasks.h"
 #include "logging_private.h"
-#include "util/stack_info.h"
+#include "kernel/util/stack_info.h"
 
 #include "console/console_internal.h"
 #include "console/prompt.h"
 #include "console/serial_console.h"
 #include "debug/advanced_logging.h"
 #include "drivers/rtc.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 
 #include "pbl/mcu/interrupts.h"
 #include "pbl/mcu/privilege.h"

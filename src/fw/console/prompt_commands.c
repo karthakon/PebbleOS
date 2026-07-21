@@ -15,7 +15,7 @@
 #include "drivers/task_watchdog.h"
 #include "flash_region/flash_region.h"
 #include "kernel/event_loop.h"
-#include "kernel/logging_private.h"
+#include "logging/logging_private.h"
 #include "kernel/pbl_malloc.h"
 #include "kernel/pebble_tasks.h"
 #include "kernel/util/delay.h"
@@ -31,7 +31,7 @@
 #include "syscall/syscall.h"
 #include "system/bootbits.h"
 #include "system/hexdump.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "system/reboot_reason.h"
 #include "system/reset.h"

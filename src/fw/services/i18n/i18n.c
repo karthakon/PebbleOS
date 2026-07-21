@@ -37,7 +37,7 @@
 #include "pbl/services/filesystem/pfs.h"
 #include "shell/normal/language_ui.h"
 #include "shell/prefs.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "pbl/util/list.h"
 
@@ -455,6 +455,10 @@ fail:
 }
 
 void i18n_get_with_buffer(const char *msgid, char *buffer, size_t length) {
+  if (length == 0) {
+    // Nothing fits, and buffer[length - 1] below would wrap to an OOB write.
+    return;
+  }
   if (msgid == NULL || msgid[0] == 0) {
     goto fail;
   }

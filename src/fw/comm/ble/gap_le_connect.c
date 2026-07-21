@@ -15,7 +15,7 @@
 #include "pbl/services/bluetooth/bluetooth_persistent_storage.h"
 #include "pbl/services/bluetooth/ble_hrm.h"
 #include "system/hexdump.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 
 #include <bluetooth/gap_le_connect.h>
@@ -1012,6 +1012,7 @@ void gap_le_connect_handle_bonding_change(BTBondingID bonding_id, BtPersistBondi
                                               &updated_bonding.device, NULL)) {
       WTF;
     }
+    updated_bonding.id = bonding_id;
   }
 
   bt_lock();

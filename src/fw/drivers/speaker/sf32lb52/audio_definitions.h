@@ -40,6 +40,9 @@ typedef struct AudioState {
   uint8_t *circ_buffer_storage;
   CircularBuffer circ_buffer;
   AudioTransCB trans_cb;
+  //! Set while a prv_audio_trans_bg refill callback is queued on the system
+  //! task; the DMA ISR must not enqueue another until it has run.
+  volatile bool callback_pending;
   uint8_t volume;
   //! Raw (unaligned) pointer returned by kernel_malloc for the AUDCODEC DAC
   //! DMA buffer. haudcodec->buf[] is bumped up to a cache-line boundary so

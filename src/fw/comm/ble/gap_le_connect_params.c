@@ -13,7 +13,7 @@
 #include "kernel/pbl_malloc.h"
 #include "pbl/services/analytics/analytics.h"
 #include "pbl/services/new_timer/new_timer.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "util/time/time.h"
 
 #include <bluetooth/bluetooth_types.h>
@@ -64,7 +64,11 @@
 //! See v4.2 "9.3.12 Connection Interval Timing Parameters":
 //! "The Peripheral device should not perform a Connection Parameter Update procedure
 //! within TGAP(conn_pause_peripheral = 5 seconds) after establishing a connection."
-#define REQUIRED_INIT_PAUSE_S (5)
+//! We deliberately deviate from this recommendation ("should", not "shall"): iOS
+//! creates the connection with a 720ms supervision timeout and never raises it on
+//! its own, so the link is fragile until our first update request is granted. See
+//! also the note below about Apple's relaxed handling of TGAP timings.
+#define REQUIRED_INIT_PAUSE_S (1)
 #define REQUIRED_INIT_PAUSE_TICKS (REQUIRED_INIT_PAUSE_S * RTC_TICKS_HZ)
 
 //! Try 3 times before giving up.

@@ -12,7 +12,7 @@
 #include "pbl/services/filesystem/pfs.h"
 #include "pbl/services/settings/settings_file.h"
 #include "pbl/services/timeline/attributes_actions.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "pbl/util/attributes.h"
 #include "util/units.h"
@@ -119,6 +119,11 @@ iOSNotifPrefs* ios_notif_pref_db_get_prefs(const uint8_t *app_id, int key_len) {
   const int serialized_prefs_data_len = prv_get_serialized_prefs(&file, app_id, key_len,
                                                                  &serialized_prefs);
   prv_file_close_and_unlock(&file);
+
+  if (!serialized_prefs) {
+    // Record was undersized, unreadable, or allocation failed.
+    return NULL;
+  }
 
   size_t string_alloc_size;
   uint8_t attributes_per_action[serialized_prefs->num_actions];
@@ -388,6 +393,11 @@ static bool prv_print_notif_pref_db(SettingsFile *file, SettingsRecordInfo *info
 
   SerializedNotifPrefs *serialized_prefs = NULL;
   prv_get_serialized_prefs(file, (uint8_t *)app_id, info->key_len, &serialized_prefs);
+  if (!serialized_prefs) {
+    prompt_send_response("Failed to read prefs");
+    prompt_send_response("");
+    return true;
+  }
   prompt_send_response_fmt(buffer, sizeof(buffer), "Attributes: %d,  Actions: %d",
       serialized_prefs->num_attributes, serialized_prefs->num_actions);
 

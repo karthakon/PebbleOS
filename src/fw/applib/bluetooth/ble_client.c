@@ -10,7 +10,7 @@
 #include "process_state/app_state/app_state.h"
 #include "syscall/syscall.h"
 #include "syscall/syscall_internal.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "pbl/util/math.h"
 
@@ -148,7 +148,9 @@ static void prv_consume_notifications(const PebbleBLEGATTClientEvent *e,
       gatt_error = BLEGATTErrorLocalInsufficientResources;
       value_length = 0;
     }
-    uintptr_t object_ref;
+    // Init: consume may return without writing object_ref (e.g. buffer already freed),
+    // and it is still handed to the app handler below.
+    uintptr_t object_ref = 0;
     // Consume, even if we didn't have enough memory, this will eat the notification and free up
     // the space in the buffer.
     const uint16_t next_value_length = sys_ble_client_consume_notification(&object_ref,

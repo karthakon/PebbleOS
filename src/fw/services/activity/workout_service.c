@@ -17,7 +17,7 @@
 #include "pbl/services/evented_timer.h"
 #include "pbl/services/hrm/hrm_manager_private.h"
 #include "pbl/services/regular_timer.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "util/time/time.h"
 #include "util/units.h"

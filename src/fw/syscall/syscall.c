@@ -15,8 +15,8 @@
 #include "process_management/app_manager.h"
 #include "process_management/worker_manager.h"
 #include "pbl/services/comm_session/session.h"
-#include "kernel/logging_private.h"
-#include "system/logging.h"
+#include "logging/logging_private.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "pbl/util/string.h"
 

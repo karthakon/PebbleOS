@@ -48,7 +48,7 @@
 #include "kernel/fault_handling.h"
 #include "kernel/memory_layout.h"
 #include "kernel/panic.h"
-#include "kernel/pulse_logging.h"
+#include "logging/pulse_logging.h"
 #include "pbl/services/services.h"
 #include "pbl/services/boot_splash.h"
 #include "pbl/services/clock.h"
@@ -76,7 +76,7 @@
 
 #include "console/serial_console.h"
 #include "system/bootbits.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "system/passert.h"
 #include "system/reset.h"
 
