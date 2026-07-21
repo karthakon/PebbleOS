@@ -175,8 +175,7 @@ T_STATIC bool prv_can_turn_sensor_on(void) {
 
   return s_manager_state.enabled_run_level &&
          s_manager_state.enabled_charging_state &&
-         (activity_prefs_heart_rate_is_enabled() ||
-          activity_prefs_blood_oxygen_is_enabled());
+         activity_prefs_heart_rate_is_enabled();
 }
 
 // The GH3X2X lights one optical path at a time: SpO2 uses the red/IR LEDs, BPM/HRV use the green
@@ -312,17 +311,11 @@ static void prv_update_hrm_enable_system_cb(void *unused) {
       const int32_t spin_up_ticks = (int32_t)milliseconds_to_ticks(
                                              HRM_SENSOR_SPIN_UP_SEC * MS_PER_SECOND);
 
-      // BPM (green) and SpO2 (red/IR) sampling are each gated on their own user pref. Mask out any
-      // feature whose monitoring is disabled so a lingering subscriber for it (e.g. the BLE relay
-      // or a dormant background SpO2 session) can't light its LED or turn the sensor on. A
-      // subscriber left with no enabled features is ignored entirely.
+      // BPM (green) sampling is gated on the Heart Rate user pref. Mask the feature out when
+      // monitoring is disabled so a lingering subscriber (e.g. the BLE relay) can't light the
+      // green LED or turn the sensor on. A subscriber left with no enabled features is ignored
+      // entirely. SpO2 (red/IR) has no pref of its own: app subscriptions drive it directly.
       HRMFeature allowed_features = (HRMFeature)~0;
-      // SpO2 is allowed if daily monitoring is on, OR if the during-activities opt-in is on (it
-      // works independently of the daily toggle).
-      if (!activity_prefs_blood_oxygen_is_enabled() &&
-          !activity_prefs_blood_oxygen_activity_tracking_is_enabled()) {
-        allowed_features &= ~HRMFeature_SpO2;
-      }
       if (!activity_prefs_heart_rate_is_enabled()) {
         allowed_features &= ~HRMFeature_BPM;
       }

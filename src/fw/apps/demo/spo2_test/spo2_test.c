@@ -22,9 +22,6 @@ typedef struct {
   HRMSessionRef session;
   EventServiceInfo hrm_event_info;
 
-  // True if we force-enabled blood oxygen monitoring on entry and must restore it on exit.
-  bool restore_blood_oxygen_pref;
-
   uint32_t sample_count;
 
   Window window;
@@ -88,13 +85,6 @@ static void prv_handle_hrm_data(PebbleEvent *e, void *context) {
 }
 
 static void prv_enable_spo2(AppData *app_data) {
-  // Force blood oxygen monitoring on for the duration of the test; the HRM manager masks out the
-  // SpO2/IR path entirely when the user pref is disabled. Remember the prior value to restore.
-  app_data->restore_blood_oxygen_pref = !activity_prefs_blood_oxygen_is_enabled();
-  if (app_data->restore_blood_oxygen_pref) {
-    activity_prefs_set_blood_oxygen_enabled(true);
-  }
-
   app_data->hrm_event_info = (EventServiceInfo) {
     .type = PEBBLE_HRM_EVENT,
     .handler = prv_handle_hrm_data,
@@ -108,11 +98,6 @@ static void prv_enable_spo2(AppData *app_data) {
 static void prv_disable_spo2(AppData *app_data) {
   event_service_client_unsubscribe(&app_data->hrm_event_info);
   sys_hrm_manager_unsubscribe(app_data->session);
-
-  if (app_data->restore_blood_oxygen_pref) {
-    activity_prefs_set_blood_oxygen_enabled(false);
-    app_data->restore_blood_oxygen_pref = false;
-  }
 }
 
 static void prv_init(void) {
