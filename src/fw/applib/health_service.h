@@ -399,14 +399,23 @@ uint16_t health_service_peek_hrv_ppi_ms(void);
 bool health_service_set_hrv_sample_period(uint16_t interval_sec);
 
 //! Get the most recent blood oxygen (SpO2) reading in percent.
-//! Readings are produced on the system's SpO2 monitoring schedule (see the
-//! Health settings menu); this returns the last one delivered.
+//! Readings are produced while any app holds an SpO2 sample period (see
+//! health_service_set_spo2_sample_period); this returns the last one delivered.
 //! @return SpO2 percent, or 0 if no reading available.
 uint8_t health_service_peek_spo2_percent(void);
 
 //! Get the quality of the most recent blood oxygen (SpO2) reading.
-//! @return HRMQuality value of the last SpO2 reading, 0 (HRMQuality_NoAccel) if none.
+//! @return HRMQuality value of the last SpO2 reading (HRMQuality_OffWrist = -1,
+//! Worst = 0, Poor = 1, Acceptable = 2, Good = 3, Excellent = 4).
 uint8_t health_service_peek_spo2_quality(void);
+
+//! Request blood oxygen (SpO2) sampling. While any app holds an SpO2 sample period, the sensor
+//! collects SpO2 readings and HealthEventSpO2Update events are delivered to health service
+//! subscribers. SpO2 shares the app's single sensor subscription: enabling it alongside an HRV or
+//! heart rate sample period preserves those features, and all of them share this interval.
+//! @param interval_sec desired sampling interval in seconds; 0 disables SpO2 for this app.
+//! @return true on success.
+bool health_service_set_spo2_sample_period(uint16_t interval_sec);
 
 //! Set the desired sampling period for heart rate readings. Normally, the system will sample the
 //! heart rate using a sampling period that is automatically chosen to provide useful information

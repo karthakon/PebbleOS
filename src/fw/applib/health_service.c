@@ -1259,6 +1259,48 @@ bool health_service_set_hrv_sample_period(uint16_t interval_sec) {
 #endif
 }
 
+bool health_service_set_spo2_sample_period(uint16_t interval_sec) {
+#ifndef CONFIG_HRM
+  return false;
+#else
+  if (!sys_activity_is_initialized()) {
+    return false;
+  }
+  if (!sys_activity_prefs_heart_rate_is_enabled()) {
+    return false;
+  }
+  AppInstallId app_id = app_get_app_id();
+  if (app_id == INSTALL_ID_INVALID) {
+    return false;
+  }
+  // The HRM manager keeps one subscription per app and a re-subscribe REPLACES it, so preserve any
+  // features the app already requested (e.g. an HRV stream) and just add/remove the SpO2 bit. Both
+  // features share the single subscription's update interval.
+  HRMFeature features = 0;
+  uint32_t existing_interval_s = 0;
+  HRMSessionRef hrm_session = sys_hrm_manager_get_app_subscription(app_id);
+  if (hrm_session != HRM_INVALID_SESSION_REF) {
+    sys_hrm_manager_get_subscription_info(hrm_session, NULL, &existing_interval_s, NULL, &features);
+  }
+  if (interval_sec == 0) {
+    // Caller wants SpO2 off: drop the bit, keep any other features running.
+    features &= ~HRMFeature_SpO2;
+    if (features == 0) {
+      if (hrm_session != HRM_INVALID_SESSION_REF) {
+        sys_hrm_manager_unsubscribe(hrm_session);
+      }
+      return true;
+    }
+    hrm_session = sys_hrm_manager_app_subscribe(app_id, existing_interval_s, 0 /*expire_sec*/,
+                                                features);
+    return (hrm_session != HRM_INVALID_SESSION_REF);
+  }
+  features |= HRMFeature_SpO2;
+  hrm_session = sys_hrm_manager_app_subscribe(app_id, interval_sec, 0 /*expire_sec*/, features);
+  return (hrm_session != HRM_INVALID_SESSION_REF);
+#endif
+}
+
 bool health_service_set_heart_rate_sample_period(uint16_t interval_sec) {
 #ifndef CONFIG_HRM
   return false;
