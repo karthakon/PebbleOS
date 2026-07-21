@@ -12,7 +12,7 @@
 #include "process_state/app_state/app_state.h"
 #include "pbl/services/activity/activity.h"
 #include "pbl/services/hrm/hrm_manager.h"
-#include "system/logging.h"
+#include <pbl/logging/logging.h>
 #include "util/time/time.h"
 
 #define SPO2_TEST_PERCENT_LEN 12
