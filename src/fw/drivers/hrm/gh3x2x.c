@@ -49,6 +49,7 @@ extern void Gh3x2xSetHbaMode(GS32 nHbaScenario);
 // batches). Well under the part's FIFO depth (original firmware used 80).
 #define GH3X2X_FIFO_WATERMARK_BACKGROUND 75
 #define GH3X2X_HR_SAMPLING_RATE 25
+#define GH3X2X_HRV_SAMPLING_RATE 100
 
 static volatile uint32_t s_hrm_int_flag = false;
 static volatile uint32_t s_hrm_timer_flag = false;
@@ -566,7 +567,7 @@ bool hrm_enable(HRMDevice *dev, HRMFeature features, bool low_latency) {
   Gh3x2xDemoFunctionSampleRateSet(GH3X2X_FUNCTION_HR, GH3X2X_HR_SAMPLING_RATE);
 #ifdef CONFIG_HRM_HRV
   if (features & HRMFeature_HRV) {
-    Gh3x2xDemoFunctionSampleRateSet(GH3X2X_FUNCTION_HRV, GH3X2X_HR_SAMPLING_RATE);
+    Gh3x2xDemoFunctionSampleRateSet(GH3X2X_FUNCTION_HRV, GH3X2X_HRV_SAMPLING_RATE);
   }
 #endif
   Gh3x2xDemoStartSampling(dev->state->work_mode);
